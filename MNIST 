@@ -1,0 +1,198 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "gpuType": "T4",
+      "authorship_tag": "ABX9TyO9Yarh8cHTLjIlU5hcrtLi",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    },
+    "accelerator": "GPU"
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Anubhav-Anand-26/Deep-Learning/blob/main/MNIST%20\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "id": "TQKlV96aW9NY"
+      },
+      "outputs": [],
+      "source": [
+        "import tensorflow as tf\n",
+        "from tensorflow.keras import layers,models\n",
+        "from tensorflow.keras.datasets import mnist"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "(train_images,train_labels),(test_images,test_labels)=mnist.load_data()"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ni1m0KoxdQEg",
+        "outputId": "37898a6c-2ea5-4f97-db0e-70dd201ffa21"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz\n",
+            "\u001b[1m11490434/11490434\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 0us/step\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "train_images=train_images.reshape((60000,28,28,1)).astype('float32')/255\n",
+        "test_images=test_images.reshape((10000,28,28,1)).astype('float32')/255"
+      ],
+      "metadata": {
+        "id": "0KHW7twDdZHc"
+      },
+      "execution_count": 3,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model = models.Sequential([\n",
+        "layers.Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),\n",
+        "layers.MaxPooling2D((2,2)),\n",
+        "layers.Conv2D(64, (3,3), activation='relu'),\n",
+        "layers.MaxPooling2D((2,2)),\n",
+        "layers.Conv2D(64, (3,3), activation='relu'),\n",
+        "layers.Flatten(),\n",
+        "layers.Dense(64, activation='relu'),\n",
+        "layers.Dense(10, activation='softmax')\n",
+        "])"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ma3oHyNWdiHr",
+        "outputId": "388b4db4-8a8d-4287-877e-efc5a59bbef4"
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "/usr/local/lib/python3.10/dist-packages/keras/src/layers/convolutional/base_conv.py:107: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.\n",
+            "  super().__init__(activity_regularizer=activity_regularizer, **kwargs)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model.compile(optimizer='adam',\n",
+        "\n",
+        "loss='sparse_categorical_crossentropy',\n",
+        "\n",
+        "metrics=['accuracy'])"
+      ],
+      "metadata": {
+        "id": "3VhZcDpVdl1O"
+      },
+      "execution_count": 5,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "history = model.fit(train_images, train_labels,\n",
+        "epochs=5, batch_size=64, validation_split=0.2)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "idQIFFYBdqtC",
+        "outputId": "844e684a-6e28-4298-8d65-e058f95f6423"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 1/5\n",
+            "\u001b[1m750/750\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m10s\u001b[0m 6ms/step - accuracy: 0.8468 - loss: 0.4924 - val_accuracy: 0.9804 - val_loss: 0.0712\n",
+            "Epoch 2/5\n",
+            "\u001b[1m750/750\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m3s\u001b[0m 4ms/step - accuracy: 0.9782 - loss: 0.0683 - val_accuracy: 0.9829 - val_loss: 0.0580\n",
+            "Epoch 3/5\n",
+            "\u001b[1m750/750\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m5s\u001b[0m 3ms/step - accuracy: 0.9860 - loss: 0.0415 - val_accuracy: 0.9871 - val_loss: 0.0423\n",
+            "Epoch 4/5\n",
+            "\u001b[1m750/750\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m2s\u001b[0m 3ms/step - accuracy: 0.9907 - loss: 0.0309 - val_accuracy: 0.9883 - val_loss: 0.0413\n",
+            "Epoch 5/5\n",
+            "\u001b[1m750/750\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m3s\u001b[0m 4ms/step - accuracy: 0.9932 - loss: 0.0234 - val_accuracy: 0.9872 - val_loss: 0.0477\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "test_loss, test_acc = model.evaluate(test_images,\n",
+        "test_labels)\n",
+        "\n",
+        "print(f'Test Accuracy: {test_acc}')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "NGaELTg2dtzI",
+        "outputId": "949b61ce-78bc-40db-b315-3e144efd6a24"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[1m313/313\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m1s\u001b[0m 4ms/step - accuracy: 0.9842 - loss: 0.0489\n",
+            "Test Accuracy: 0.9890000224113464\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "UqN4h0Wrd5Sb"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
